@@ -257,4 +257,6 @@ def update_request(request_id):
 if __name__ == '__main__':
     with app.app_context():
         create_default_admin()
-    app.run(debug=True)
+
+
+
