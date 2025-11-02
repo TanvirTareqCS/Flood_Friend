@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Map{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Interactive Flood Map</h1>
+  {% if current_user.is_authenticated and current_user.role == 'admin' %}
+    <div class="map-controls">
+      <button id="addAlertBtn" class="btn btn-primary">Add Alert</button>
+      <button id="addResourceBtn" class="btn btn-secondary">Add Resource</button>
+    </div>
+  {% endif %}
+  <div id="map" style="height: 600px; width: 100%; margin: 20px 0; border: 2px solid #ddd; border-radius: 8px"></div>
+  <div class="map-legend">
+    <h4>Map Legend</h4>
+    <div class="legend-item"><span class="legend-color alert-critical"></span> <span>Critical Alerts</span></div>
+    <div class="legend-item"><span class="legend-color alert-high"></span> <span>High Alerts</span></div>
+    <div class="legend-item"><span class="legend-color alert-medium"></span> <span>Medium Alerts</span></div>
+    <div class="legend-item"><span class="legend-color alert-low"></span> <span>Low Alerts</span></div>
+    <div class="legend-item"><span class="legend-color resource"></span> <span>Resources</span></div>
+  </div>
+  <script>
+    // Pass data from Flask to JavaScript
+    const alertsData = {{ alerts|tojson }};
+    const resourcesData = {{ resources|tojson }};
+    console.log("Alerts data", alertsData);
+    console.log("Resources data", resourcesData);
+  </script>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+</div>
+{% endblock %}

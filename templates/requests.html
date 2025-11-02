@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Requests{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Resource Requests</h1>
+  {% if current_user.is_authenticated and current_user.role == 'user' %}
+    <form id="requestForm">
+      <div>
+        <label for="resourcetype">Resource Type</label>
+        <input type="text" id="resourcetype" name="resourcetype" required>
+      </div>
+      <div>
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Request</button>
+    </form>
+    <script>
+      document.getElementById('requestForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetch('/request/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            resource_type: document.getElementById('resourcetype').value,
+            description: document.getElementById('description').value
+          })
+        }).then(response => response.json()).then(data => {
+          alert(data.message);
+          location.reload();
+        });
+      });
+    </script>
+  {% endif %}
+  <div class="requests-list">
+    {% for req in requests %}
+    <div class="request-card">
+      <strong>Type:</strong> {{ req.resource_type }}<br>
+      <strong>Description:</strong> {{ req.description }}<br>
+      <strong>Status:</strong> {{ req.status }}<br>
+      <strong>Submitted:</strong> {{ req.timestamp.strftime('%Y-%m-%d %H:%M') }}
+      {% if current_user.is_authenticated and current_user.role == 'admin' %}
+        <div style="margin-top:8px;">
+          <select id="status-select-{{ req.id }}">
+            <option value="pending"{% if req.status == "pending" %} selected{% endif %}>Pending</option>
+            <option value="approved"{% if req.status == "approved" %} selected{% endif %}>Approved</option>
+            <option value="delivered"{% if req.status == "delivered" %} selected{% endif %}>Delivered</option>
+            <option value="rejected"{% if req.status == "rejected" %} selected{% endif %}>Rejected</option>
+          </select>
+          <button type="button" onclick="updateRequestStatus({{ req.id }})" class="btn btn-success">Update</button>
+        </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <style>
+    .request-card { background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); padding: 1.2rem; margin-bottom: 1.5rem; }
+    .requests-list { margin-top: 2rem; }
+    .btn-success { background: #2ecc40; color: white; border: none; padding: .4rem 1rem; border-radius: 5px; font-weight: bold; margin-top: .6rem; }
+  </style>
+  <script>
+    function updateRequestStatus(requestId) {
+      var select = document.getElementById('status-select-' + requestId);
+      var statusValue = select.value;
+      fetch('/request/update/' + requestId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: statusValue })
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.message) {
+          alert(data.message);
+          location.reload();
+        } else if (data.error) {
+          alert("Error: " + data.error);
+        }
+      })
+      .catch(function(error) {
+        alert("Error updating request: " + error);
+      });
+    }
+  </script>
+</div>
+{% endblock %}

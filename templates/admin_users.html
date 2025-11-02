@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Admin - User Management{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>User Management</h1>
+  <table style="width:100%; margin-top:2rem; margin-bottom:2rem; border-collapse:collapse;">
+    <tr style="background:#f1f1f2;">
+      <th style="padding:8px;">User ID</th>
+      <th style="padding:8px;">Username</th>
+      <th style="padding:8px;">Email</th>
+      <th style="padding:8px;">Role</th>
+      <th style="padding:8px;">Action</th>
+    </tr>
+    {% for user in users %}
+    <tr style="border-bottom:1px solid #eee;">
+      <td style="padding:8px;">{{ user.id }}</td>
+      <td style="padding:8px;">{{ user.username }}</td>
+      <td style="padding:8px;">{{ user.email }}</td>
+      <td style="padding:8px;">
+        {% if user.role == 'admin' %}
+          <span style="color:#e74c3c;font-weight:bold;">Admin</span>
+        {% else %}
+          {{ user.role|capitalize }}
+        {% endif %}
+      </td>
+      <td style="padding:8px;">
+        {% if user.role != 'admin' %}
+        <form method="post" style="display:inline;">
+          <input type="hidden" name="user_id" value="{{ user.id }}">
+          <button type="submit" class="btn btn-success">Promote to Admin</button>
+        </form>
+        {% else %}
+        ---
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Dashboard</a>
+  <style>
+    .btn-secondary { background:#868e96; color:white; border:none; padding:.5rem 1.1rem; border-radius:5px; font-weight:bold; }
+    .btn-success { background: #2ecc40; color: white; border: none; padding: .4rem 1rem; border-radius: 5px; font-weight: bold; }
+  </style>
+</div>
+{% endblock %}

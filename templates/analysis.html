@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Flood Analysis Dashboard</h1>
+
+    <div class="analysis-grid">
+        <div class="analysis-card">
+            <h3>Alerts by Severity</h3>
+            <div class="chart-container">
+                {% for severity, count in alerts_by_severity %}
+                <div class="chart-bar">
+                    <div class="bar-label">{{ severity }}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill severity-{{ severity.lower() }}"
+                             style="width: {{ (count / (alerts_by_severity|sum(attribute=1) or 1)) * 100 }}%">
+                            <span class="bar-value">{{ count }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="analysis-card">
+            <h3>Resources by Type</h3>
+            <div class="chart-container">
+                {% for type, count in resources_by_type %}
+                <div class="chart-bar">
+                    <div class="bar-label">{{ type|title }}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill"
+                             style="width: {{ (count / (resources_by_type|sum(attribute=1) or 1)) * 100 }}%">
+                            <span class="bar-value">{{ count }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-alerts">
+        <h3>Recent Alerts Timeline</h3>
+        <div class="timeline">
+            {% for alert in recent_alerts %}
+            <div class="timeline-item severity-{{ alert.severity.lower() }}">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <h4>{{ alert.title }}</h4>
+                    <p>{{ alert.location }} - {{ alert.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <span class="severity-badge">{{ alert.severity }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

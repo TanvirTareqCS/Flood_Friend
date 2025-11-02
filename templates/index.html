@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>Welcome to Flood Friend</h1>
+        <p>Your trusted companion for flood alerts, resources, and analysis</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('alerts') }}" class="btn btn-primary">View Alerts</a>
+            <a href="{{ url_for('map_page') }}" class="btn btn-secondary">View Map</a>
+        </div>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>🚨 Real-time Alerts</h3>
+        <p>Get immediate notifications about flood risks in your area</p>
+    </div>
+    <div class="feature-card">
+        <h3>🏥 Resource Management</h3>
+        <p>Find and share information about shelters, food, and medical aid</p>
+    </div>
+    <div class="feature-card">
+        <h3>📊 Data Analysis</h3>
+        <p>Comprehensive analysis of flood patterns and resource distribution</p>
+    </div>
+    <div class="feature-card">
+        <h3>🗺️ Interactive Maps</h3>
+        <p>Visual representation of alerts and resources on detailed maps</p>
+    </div>
+</div>
+{% endblock %}
